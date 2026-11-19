@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+node_modules/
+.venv/
+.playwright-mcp/
+/dist/
+/coverage/
+.env
+.env.*
+*.pem
+*.key

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prewalk 配置</title>
+<link rel="stylesheet" href="style.css">
+<script src="_magpie/bridge.js"></script>
+<script src="model.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<main class="prewalk">
+  <header class="head">
+    <div>
+      <h1>Prewalk 配置</h1>
+      <p class="lede">强模型规划，弱模型实施。配置只保存在本插件的 options 中，不包含服务密钥。</p>
+    </div>
+    <span class="badge" id="modeBadge">读取中</span>
+  </header>
+
+  <section class="card" id="loading">正在读取插件配置…</section>
+
+  <form class="card" id="form" hidden>
+    <div class="entry">
+      <div>
+        <span class="label">入口</span>
+        <code id="entry">-</code>
+      </div>
+      <p class="hint">入口 ID 影响客户端模型名与 wrapper 零价配置，只能由管理员在安装时固定。</p>
+    </div>
+
+    <label class="field">
+      <span class="label">规划模型 planner</span>
+      <select id="planner" name="planner"></select>
+      <span class="hint">候选来自当前配置、今日实际使用的模型和路由组。规划、重规划和健康判断使用它。</span>
+      <span class="error" data-error="planner"></span>
+    </label>
+
+    <label class="field">
+      <span class="label">实施模型 executor</span>
+      <select id="executor" name="executor"></select>
+      <span class="hint">候选来自当前配置、今日实际使用的模型和路由组；必须与规划模型不同。</span>
+      <span class="error" data-error="executor"></span>
+    </label>
+
+    <label class="field">
+      <span class="label">阶段模式</span>
+      <select id="defaultMode" name="defaultMode">
+        <option value="plan_then_execute">自动规划后交接</option>
+        <option value="direct">直接由实施模型开始</option>
+        <option value="strong_only">始终使用规划模型</option>
+      </select>
+      <span class="hint">新会话的默认策略。自动模式会先做一次受限分类。</span>
+      <span class="error" data-error="defaultMode"></span>
+    </label>
+
+    <label class="field">
+      <span class="label">分类超时</span>
+      <div class="number">
+        <input id="classifyTimeoutMs" name="classifyTimeoutMs" type="number" min="1000" max="300000" step="1" inputmode="numeric">
+        <span>毫秒</span>
+      </div>
+      <span class="hint">1000 到 300000；新配置默认 120000（120 秒），覆盖排队与完整响应。已有值不自动更改；慢规划模型可调大。失败或超时保持强模型。</span>
+      <span class="error" data-error="classifyTimeoutMs"></span>
+    </label>
+
+    <label class="field">
+      <span class="label">执行健康判断超时</span>
+      <div class="number">
+        <input id="healthTimeoutMs" name="healthTimeoutMs" type="number" min="1000" max="30000" step="1" inputmode="numeric">
+        <span>毫秒</span>
+      </div>
+      <span class="hint">1000 到 30000，默认 10000。与分类超时独立；失败或超时回强重规划。</span>
+      <span class="error" data-error="healthTimeoutMs"></span>
+    </label>
+
+    <div class="actions">
+      <button type="button" id="save" class="primary">保存</button>
+      <button type="button" id="reload" class="secondary">重新读取</button>
+    </div>
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+
+    <div class="note">
+      <strong>保存会重启插件宿主。</strong>
+      进行中的客户端请求可能短暂失败；会话状态保存在服务器，不会因此丢失。
+    </div>
+  </form>
+
+  <section class="card notes" id="groupsCard" hidden>
+    <h2>路由组</h2>
+    <p class="hint">这些路由组也出现在上面的下拉框中，可以作为 planner 或 executor。不能选择本插件入口。</p>
+    <ul id="groups"></ul>
+  </section>
+
+  <section class="card notes">
+    <h2>不在此页配置</h2>
+    <ul>
+      <li>服务密钥：在插件登录处配置，只允许 planner/executor 直接引用。</li>
+      <li>wrapper 零价：必须对入口模型设置完整 <code>0/0/0/0</code> 用户价格，否则只表示未定价。</li>
+      <li>状态目录与 512 会话上限：由服务器环境决定。</li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>

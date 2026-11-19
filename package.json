@@ -1,0 +1,20 @@
+{
+  "name": "magpie-prewalk",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Prewalk routing policy for magpie: strong model plans, weak model implements.",
+  "magpie": {
+    "hooks": "dist/index.hooks.js"
+  },
+  "scripts": {
+    "typecheck": "bun build src/index.ts --outfile /dev/null --target browser",
+    "test": "bun test",
+    "test:integration": "bun test tests/policy/policy.test.ts tests/policy/history.test.ts",
+    "test:coverage": "bun test --coverage",
+    "build": "bun build src/index.ts --outfile dist/index.hooks.js --target browser",
+    "build:package": "mkdir -p dist/magpie-prewalk-package/dist && sh scripts/build-package.sh",
+    "test:provider-gateway": "sh scripts/test-provider-gateway.sh",
+    "test:provider-page": "python3 -I tests/provider/page-e2e/test_page.py"
+  }
+}

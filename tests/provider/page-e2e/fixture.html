@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>Prewalk 配置</title>
+<script>
+// Minimal stand-in for the plugin bridge. It answers the four calls the page
+// makes, so the real page scripts run with the same promise contract.
+window.__calls = [];
+window.__stored = { providerID: "prewalk", modelID: "route", planner: "a/planner", executor: "b/executor", defaultMode: "plan_then_execute", classifyTimeoutMs: 10000 };
+function answer(method, params) {
+  window.__calls.push({ method, params });
+  if (method === "hello") return {};
+  if (method === "options.get") return { ...window.__stored };
+  if (method === "options.set") {
+    window.__stored = { ...params.options };
+    return { ...window.__stored };
+  }
+  if (method === "read" && params.name === "usage:day") return { agents: [{ models: [{ provider: "a", model: "planner" }] }] };
+  if (method === "read" && params.name === "groups:list") return [{ id: "example-executor", name: "Example executor", ref: "group/example-executor" }];
+  throw new Error("unexpected " + method);
+}
+window.magpie = {
+  ready: Promise.resolve(),
+  options: {
+    get: () => Promise.resolve(answer("options.get", {})),
+    set: (options) => Promise.resolve(answer("options.set", { options }))
+  },
+  read: (name, params) => Promise.resolve(answer("read", { name, params })),
+  onTheme() {},
+  onVisibility() {},
+  onAction() {}
+};
+addEventListener("message", (e) => {
+  const m = e.data;
+  if (!m || m.magpie !== 1) return;
+  // Only the page's own asks; the fixture's replies carry an id and no method.
+  if (typeof m.method !== "string") return;
+  try {
+    const result = answer(m.method, m.params || {});
+    e.source.postMessage({ magpie: 1, id: m.id, result }, "*");
+  } catch (error) {
+    e.source.postMessage({ magpie: 1, id: m.id, error: String(error.message || error) }, "*");
+  }
+});
+</script>
+</head>
+<body>
+<iframe id="target" src="index.html" sandbox="allow-scripts" style="width:900px;height:900px"></iframe>
+</body>
+</html>

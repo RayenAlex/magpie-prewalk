@@ -1,0 +1,28 @@
+{
+  "name": "magpie-prewalk-provider",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "provider/index.ts",
+  "magpie": {
+    "page": {
+      "title": "Prewalk",
+      "titles": {
+        "zh": "Prewalk 配置",
+        "zh-TW": "Prewalk 設定"
+      },
+      "file": "page/index.html",
+      "icon": "page/icon.svg"
+    },
+    "permissions": ["usage:day", "groups:list"],
+    "options": {
+      "providerID": "prewalk",
+      "modelID": "route",
+      "planner": "real/planner",
+      "executor": "real/executor",
+      "defaultMode": "plan_then_execute",
+      "classifyTimeoutMs": 120000,
+      "healthTimeoutMs": 10000
+    }
+  }
+}

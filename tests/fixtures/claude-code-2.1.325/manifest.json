@@ -1,0 +1,22 @@
+{
+  "version": "2.1.325",
+  "captures": [
+    "successful-edit.json",
+    "failed-edit.json",
+    "parallel-tools.json",
+    "no-hints.json",
+    "stopped.json",
+    "cancelled.json"
+  ],
+  "unsupported": [
+    "Write",
+    "subagent",
+    "auxiliary",
+    "compaction",
+    "interactive-tui",
+    "image",
+    "long-context"
+  ],
+  "response_source": "local-fake",
+  "request_source": "real-client"
+}
